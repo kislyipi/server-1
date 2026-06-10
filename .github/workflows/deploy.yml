@@ -41,7 +41,7 @@ jobs:
     - name: Validate Prometheus config
       run: |
         docker run --rm -v $(pwd)/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
-          prom/prometheus promtool check config /etc/prometheus/prometheus.yml
+          --entrypoint promtool prom/prometheus check config /etc/prometheus/prometheus.yml
         echo "Prometheus config is valid!"
 
     - name: Stop test environment
