@@ -61,7 +61,7 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
-        source: ".,!cd_exclude/**,!certbot/**,!.git"
+        source: ".,!cd_exclude/**,!certbot/**"
         target: "/home/${{ secrets.SSH_USER }}/test-site"
         overwrite: true
 
