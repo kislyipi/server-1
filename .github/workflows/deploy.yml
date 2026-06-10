@@ -61,7 +61,6 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
-        fingerprint: ${{ secrets.SSH_HOST_FINGERPRINT }}
         source: ".,!cd_exclude/**"
         target: "/home/${{ secrets.SSH_USER }}/test-site"
 
@@ -72,7 +71,6 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
-        fingerprint: ${{ secrets.SSH_HOST_FINGERPRINT }}
         script: |
           cd /home/${{ secrets.SSH_USER }}/test-site
           docker compose pull
