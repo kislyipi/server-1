@@ -1,7 +1,7 @@
 services:
 
   nginx:
-    image: crowdsecurity/crowdsec-nginx-bouncer:latest
+    image: crowdsecurity/openresty:latest
     ports:
       - "80:80"
       - "443:443"
