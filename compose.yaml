@@ -18,6 +18,35 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - ./certbot/www:/var/www/certbot
       - ./certbot/conf:/etc/letsencrypt
+      - ./nginx/logs:/var/log/nginx
+    restart: unless-stopped
+    depends_on:
+      - crowdsec
+
+  crowdsec:
+    image: crowdsecurity/crowdsec:latest
+    container_name: crowdsec
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      - COLLECTIONS=crowdsecurity/nginx crowdsecurity/base-http-scenarios crowdsecurity/whitelist-good-bots
+      - BOUNCER_KEY_nginx-bouncer=${bouncer_key}
+    volumes:
+      - ./nginx/logs:/var/log/nginx:ro
+      - ./crowdsec/data:/var/lib/crowdsec/data
+      - ./crowdsec/config:/etc/crowdsec
+    restart: unless-stopped
+
+  bouncer:
+    image: ghcr.io/frigori/cs-firewall-bouncer-armv7:sha-9e1ae4b
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - CROWDSEC_LAPI_URL=http://127.0.0.1:8080
+      - BOUNCER_KEY=${bouncer_key}
+    depends_on:
+      - crowdsec
     restart: unless-stopped
 
   certbot:

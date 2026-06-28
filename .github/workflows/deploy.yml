@@ -19,6 +19,9 @@ jobs:
           -out ./certbot/conf/live/kuban-govnovoz.space/fullchain.pem \
           -subj "/CN=localhost"
 
+    - name: Login to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
     - name: Start test environment
       run: docker compose up -d
 
@@ -63,6 +66,9 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         source: ".,!cd_exclude/**,!certbot/**"
         target: "/home/${{ secrets.SSH_USER }}/test-site"
+
+    - name: Login to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
     - name: Executing remote SSH commands to deploy
       uses: appleboy/ssh-action@v1.0.3
