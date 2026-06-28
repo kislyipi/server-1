@@ -25,7 +25,7 @@ services:
     volumes:
       - ./certbot/www:/var/www/certbot
       - ./certbot/conf:/etc/letsencrypt
-    command: certonly --standalone -d ${DOMAIN} --agree-tos -m ${EMAIL} --non-interactive
+    command: certonly --standalone -d ${domain} --agree-tos -m ${email} --non-interactive
     restart: unless-stopped
 
   nginx-exporter:
