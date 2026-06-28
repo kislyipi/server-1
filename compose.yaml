@@ -1,7 +1,7 @@
 services:
 
   nginx:
-    image: crowdsecurity/openresty-bouncer:alpine
+    image: crowdsecurity/openresty:alpine
     ports:
       - "80:80"
       - "443:443"
