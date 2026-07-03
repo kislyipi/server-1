@@ -4,3 +4,4 @@ certbot/
 .vscode/
 grafana/data/
 prometheus/data
+.trivyignore
