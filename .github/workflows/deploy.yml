@@ -30,7 +30,6 @@ jobs:
         for id in $(docker compose images -q); do
           docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
-            -e TRIVY_IGNORE_VULNS="CVE-2025-68121,CVE-2026-33815" \
             aquasec/trivy image \
             --quiet \
             --severity CRITICAL \
