@@ -25,6 +25,12 @@ jobs:
     - name: Start test environment
       run: docker compose up -d
 
+    - name: Scan images for vulnerabilities
+      run: |
+        for id in $(docker compose images -q); do
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --severity HIGH,CRITICAL --exit-code 1 $id
+        done
+
     - name: Wait for nginx to be ready
       run: |
         for i in {1..10}; do
@@ -39,13 +45,11 @@ jobs:
     - name: Validate Docker Compose file
       run: |
         docker compose config -q
-        echo "Docker Compose file is valid!"
 
     - name: Validate Prometheus config
       run: |
         docker run --rm -v $(pwd)/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
           --entrypoint promtool prom/prometheus check config /etc/prometheus/prometheus.yml
-        echo "Prometheus config is valid!"
 
     - name: Stop test environment
       run: docker compose down
@@ -79,9 +83,6 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         script: |
           cd /home/${{ secrets.SSH_USER }}/test-site
-          ls -la
-          docker --version
-          docker compose version
           docker compose down --remove-orphans
           docker compose pull
           docker compose up -d --force-recreate
