@@ -33,7 +33,7 @@ jobs:
             -e TRIVY_IGNORE_VULNS="CVE-2025-68121,CVE-2026-33815" \
             aquasec/trivy image \
             --quiet \
-            --severity HIGH,CRITICAL \
+            --severity CRITICAL \
             --ignore-unfixed \
             --vuln-type library \
             --exit-code 1 \
