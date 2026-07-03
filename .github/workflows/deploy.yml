@@ -36,6 +36,7 @@ jobs:
             --ignore-unfixed \
             --vuln-type library \
             --exit-code 1 \
+            --ignorefile /.trivyignore \
             $id
         done
 
