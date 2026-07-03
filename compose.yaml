@@ -29,7 +29,7 @@ services:
     restart: unless-stopped
 
   nginx-exporter:
-    image: nginx/nginx-prometheus-exporter:1.3.0
+    image: nginx/nginx-prometheus-exporter:1.5.1
     ports:
       - "9113:9113"
     command:
