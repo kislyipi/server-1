@@ -28,7 +28,7 @@ jobs:
     - name: Scan images for vulnerabilities
       run: |
         for id in $(docker compose images -q); do
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --severity HIGH,CRITICAL --exit-code 1 $id
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --quiet --severity HIGH,CRITICAL --exit-code 1 $id
         done
 
     - name: Wait for nginx to be ready
