@@ -2,6 +2,5 @@ version: 2
 updates:
   - package-ecosystem: "docker"
     directory: "/"
-    file: "compose.yaml"
     schedule:
       interval: "weekly"
