@@ -16,7 +16,7 @@ scrape_configs:
       module: [http_2xx]
     static_configs:
       - targets:
-        - https://kuban-govnovoz.space
+        - https://${domain}
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
