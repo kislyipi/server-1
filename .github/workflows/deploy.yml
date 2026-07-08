@@ -39,15 +39,23 @@ jobs:
     - name: Generate test SSL certificates
       if: steps.check.outputs.need_validation == 'true'
       run: |
-        mkdir -p ./certbot/conf/live/kuban-govnovoz.space
+        mkdir -p ./certbot/conf/live/localhost
         openssl req -x509 -nodes -days 1 -newkey rsa:2048 \
-          -keyout ./certbot/conf/live/kuban-govnovoz.space/privkey.pem \
-          -out ./certbot/conf/live/kuban-govnovoz.space/fullchain.pem \
+          -keyout ./certbot/conf/live/localhost/privkey.pem \
+          -out ./certbot/conf/live/localhost/fullchain.pem \
           -subj "/CN=localhost"
 
     - name: Login to Docker Hub
       if: steps.check.outputs.need_validation == 'true'
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+    - name: Create .env file for validation
+      if: steps.check.outputs.need_validation == 'true'
+      run: |
+        echo "domain=localhost" > .env
+        echo "email=test@example.com" >> .env
+        echo "login=admin" >> .env
+        echo "password=admin" >> .env
 
     - name: Start test environment
       if: steps.check.outputs.need_validation == 'true'
