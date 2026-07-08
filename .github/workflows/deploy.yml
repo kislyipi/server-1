@@ -63,18 +63,18 @@ jobs:
         done
 
     - name: Validate nginx configuration
-      if: steps.filter.outputs.nginx == 'true'
+      if: github.event_name == 'schedule' || steps.filter.outputs.nginx == 'true'
       run: |
         curl -fkI https://localhost | grep -q "200 OK"
         docker compose exec nginx nginx -t
 
     - name: Validate Docker Compose file
-      if: steps.filter.outputs.compose == 'true'
+      if: github.event_name == 'schedule' || steps.filter.outputs.compose == 'true'
       run: |
         docker compose config -q
 
     - name: Validate Prometheus config
-      if: steps.filter.outputs.prometheus == 'true'
+      if: github.event_name == 'schedule' || steps.filter.outputs.prometheus == 'true'
       run: |
         docker run --rm -v $(pwd)/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
           --entrypoint promtool prom/prometheus check config /etc/prometheus/prometheus.yml
