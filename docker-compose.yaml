@@ -75,7 +75,7 @@ services:
       - 9090:9090
     volumes:
       - ./prometheus/prometheus.yml.tpl:/etc/prometheus/prometheus.yml.tpl:ro
-      - ./prometheus/data:/prometheus
+      - ./prometheus/data:/prometheus/data
     environment:
       - domain=${domain}
     entrypoint: /bin/sh
