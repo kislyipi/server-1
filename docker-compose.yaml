@@ -92,3 +92,23 @@ services:
       - ./grafana/prometheus.yml:/etc/grafana/provisioning/datasources/prometheus.yml:ro
       - ./grafana/data:/var/lib/grafana
     restart: unless-stopped
+    
+  # loki:
+  #   image: grafana/loki:3.7.3
+  #   ports:
+  #     - "3100:3100"
+  #   volumes:
+  #     - ./loki/data:/loki
+  #     - ./loki/loki.yml:/etc/loki/loki.yml:ro
+  #   restart: unless-stopped
+
+  # promtail:
+  #   image: grafana/promtail:3.6.11
+  #   volumes:
+  #     - ./nginx/logs:/var/log/nginx:ro
+  #     - ./promtail/promtail.yml:/etc/promtail/promtail.yml:ro
+  #     - /var/log:/var/log/host:ro
+  #   command: -config.file=/etc/promtail/promtail.yml
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - loki
