@@ -4,7 +4,8 @@ on:
   push:
     branches: [ main ]
     paths-ignore:
-      - '.github/**'
+      - '.github/readme.md'
+      - '.github/dependabot.yml'
       - '.cd_exclude/**'
   schedule:
     - cron: '0 0 * * *'
@@ -61,23 +62,6 @@ jobs:
       if: steps.check.outputs.need_validation == 'true'
       run: docker compose up -d
 
-    - name: Scan images for vulnerabilities
-      if: steps.check.outputs.need_validation == 'true' && (github.event_name == 'schedule' || steps.filter.outputs.compose == 'true')
-      run: |
-        for id in $(docker compose images -q); do
-          docker run --rm \
-            -v /var/run/docker.sock:/var/run/docker.sock \
-            -v $(pwd)/cd_exclude/.trivyignore:/.trivyignore \
-            aquasec/trivy image \
-            --ignorefile /.trivyignore \
-            --quiet \
-            --severity CRITICAL \
-            --ignore-unfixed \
-            --vuln-type library \
-            --exit-code 1 \
-            $id
-        done
-
     - name: Wait for nginx to be ready
       if: steps.check.outputs.need_validation == 'true'
       run: |
@@ -100,6 +84,23 @@ jobs:
       run: |
         docker run --rm -v $(pwd)/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
           --entrypoint promtool prom/prometheus check config /etc/prometheus/prometheus.yml
+
+    - name: Scan images for vulnerabilities
+      if: steps.check.outputs.need_validation == 'true' && (github.event_name == 'schedule' || steps.filter.outputs.compose == 'true')
+      run: |
+        for id in $(docker compose images -q); do
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v $(pwd)/cd_exclude/.trivyignore:/.trivyignore \
+            aquasec/trivy image \
+            --ignorefile /.trivyignore \
+            --quiet \
+            --severity CRITICAL \
+            --ignore-unfixed \
+            --vuln-type library \
+            --exit-code 1 \
+            $id
+        done
 
     - name: Stop test environment
       if: steps.check.outputs.need_validation == 'true'
