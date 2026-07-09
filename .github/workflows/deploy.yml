@@ -23,7 +23,6 @@ jobs:
       with:
         filters: |
           nginx: 'nginx/**'
-          prometheus: 'prometheus/**'
           compose: 'docker-compose.yaml'
 
     - name: Check if validation needed
@@ -31,7 +30,7 @@ jobs:
       run: |
         if [[ "${{ github.event_name }}" == "schedule" ]]; then
           echo "need_validation=true" >> $GITHUB_OUTPUT
-        elif [[ "${{ steps.filter.outputs.nginx }}" == "true" || "${{ steps.filter.outputs.prometheus }}" == "true" || "${{ steps.filter.outputs.compose }}" == "true" ]]; then
+        elif [[ "${{ steps.filter.outputs.nginx }}" == "true" || "${{ steps.filter.outputs.compose }}" == "true" ]]; then
           echo "need_validation=true" >> $GITHUB_OUTPUT
         else
           echo "need_validation=false" >> $GITHUB_OUTPUT
