@@ -70,7 +70,7 @@ services:
     restart: unless-stopped
 
   prometheus:
-    build: ./prometheus
+    image: prom/prometheus:v3.13.0
     ports:
       - 9090:9090
     volumes:
@@ -79,7 +79,7 @@ services:
     environment:
       - domain=${domain}
     entrypoint: /bin/sh
-    command: -c "envsubst '$${domain}' < /etc/prometheus/prometheus.yml.tpl > /etc/prometheus/prometheus.yml && /bin/prometheus --config.file=/etc/prometheus/prometheus.yml"
+    command: -c "sed 's/\\$${domain}/'$$domain'/g' /etc/prometheus/prometheus.yml.tpl > /etc/prometheus/prometheus.yml && /bin/prometheus --config.file=/etc/prometheus/prometheus.yml"
     restart: unless-stopped
 
   grafana:
