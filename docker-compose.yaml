@@ -78,7 +78,8 @@ services:
       - ./prometheus/data:/prometheus
     environment:
       - domain=${domain}
-    command: sh -c "envsubst '$${domain}' < /etc/prometheus/prometheus.yml.tpl > /etc/prometheus/prometheus.yml && /bin/prometheus --config.file=/etc/prometheus/prometheus.yml"
+    entrypoint: /bin/sh
+    command: -c "envsubst '$${domain}' < /etc/prometheus/prometheus.yml.tpl > /etc/prometheus/prometheus.yml && /bin/prometheus --config.file=/etc/prometheus/prometheus.yml"
     restart: unless-stopped
 
   grafana:
@@ -92,7 +93,7 @@ services:
       - ./grafana/prometheus.yml:/etc/grafana/provisioning/datasources/prometheus.yml:ro
       - ./grafana/data:/var/lib/grafana
     restart: unless-stopped
-    
+
   # loki:
   #   image: grafana/loki:3.7.3
   #   ports:
