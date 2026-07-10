@@ -24,23 +24,6 @@ services:
     command: sh -c "envsubst '$${domain}' < /etc/nginx/conf.d/nginx.conf.tpl > /etc/nginx/conf.d/nginx.conf && nginx -g 'daemon off;'"
     restart: unless-stopped
 
-  certbot:
-    image: certbot/certbot:v5.1.0
-    volumes:
-      - ./certbot/www:/var/www/certbot
-      - ./certbot/conf:/etc/letsencrypt
-    entrypoint: |
-      sh -c '
-        if [ ! -f /etc/letsencrypt/live/${domain}/fullchain.pem ]; then
-          certbot certonly --webroot -w /var/www/certbot -d ${domain} --agree-tos -m ${email} --non-interactive
-        fi
-        while true; do
-          certbot renew --webroot -w /var/www/certbot --quiet
-          sleep 86400
-        done
-      '
-    restart: unless-stopped
-
   nginx-exporter:
     image: nginx/nginx-prometheus-exporter:1.5.1
     ports:
