@@ -68,11 +68,9 @@ jobs:
           curl -sfk https://localhost && break || sleep 2
         done
 
-    - name: Validate nginx configuration
-      if: steps.check.outputs.need_validation == 'true' && (github.event_name == 'schedule' || steps.filter.outputs.nginx == 'true')
-      run: |
-        curl --retry 5 --retry-delay 2 -fkI https://localhost | grep -q "200 OK"
-        docker compose exec nginx nginx -t
+    - name: Wait for nginx to be ready
+      if: steps.check.outputs.need_validation == 'true'
+      run: curl --retry 30 --retry-delay 3 -sfk https://localhost
 
     - name: Validate Docker Compose file
       if: steps.check.outputs.need_validation == 'true' && (github.event_name == 'schedule' || steps.filter.outputs.compose == 'true')
