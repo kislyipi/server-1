@@ -20,6 +20,7 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./nginx/logs:/var/log/nginx
     environment:
+      - TZ=Europe/Moscow
       - domain=${domain}
     command: sh -c "envsubst '$${domain}' < /etc/nginx/conf.d/nginx.conf.tpl > /etc/nginx/conf.d/nginx.conf && nginx -g 'daemon off;'"
     restart: unless-stopped
