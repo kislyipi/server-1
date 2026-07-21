@@ -54,7 +54,6 @@ jobs:
       if: steps.check.outputs.need_validation == 'true'
       run: |
         echo "domain=localhost" > .env
-        echo "url=localhost" >> .env
         echo "email=test@example.com" >> .env
         echo "login=admin" >> .env
         echo "password=admin" >> .env
