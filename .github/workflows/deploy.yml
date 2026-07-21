@@ -22,7 +22,7 @@ jobs:
       id: filter
       with:
         filters: |
-          nginx: 'nginx/**'
+          nginx: 'nginx/conf.d/**'
           compose: 'docker-compose.yaml'
 
     - name: Check if validation needed
@@ -67,10 +67,6 @@ jobs:
         for i in {1..10}; do
           curl -sfk https://localhost && break || sleep 2
         done
-
-    - name: Validate nginx configuration
-      if: steps.check.outputs.need_validation == 'true' && (github.event_name == 'schedule' || steps.filter.outputs.nginx == 'true')
-      run: |
         curl -fkI https://localhost | grep -q "200 OK"
         docker compose exec nginx nginx -t
 
