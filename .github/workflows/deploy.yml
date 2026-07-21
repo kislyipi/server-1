@@ -70,6 +70,7 @@ jobs:
         done
         curl -fkI https://localhost | grep -q "200 OK"
         docker compose exec nginx nginx -t
+        docker compose logs nginx
 
     - name: Validate Docker Compose file
       if: steps.check.outputs.need_validation == 'true' && (github.event_name == 'schedule' || steps.filter.outputs.compose == 'true')

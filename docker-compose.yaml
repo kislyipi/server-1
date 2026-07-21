@@ -1,7 +1,9 @@
 services:
 
   nginx:
-    image: linuxserver/swag
+    image: lscr.io/linuxserver/swag:latest
+    cap_add:
+      - NET_ADMIN
     ports:
       - "80:80"
       - "443:443"
