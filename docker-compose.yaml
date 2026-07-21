@@ -17,6 +17,7 @@ services:
       - ./nginx/html:/config/www
       - ./nginx/conf.d/default.conf:/config/nginx/site-confs/default.conf
       - ./swag/config:/config
+    command: /bin/sh -c "envsubst < /config/nginx/site-confs/default.conf > /tmp/default.conf && cp /tmp/default.conf /config/nginx/site-confs/default.conf && /init"
     restart: unless-stopped
 
   nginx-exporter:
