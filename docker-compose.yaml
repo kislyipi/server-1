@@ -26,7 +26,7 @@ services:
       - ./swag/config:/config
       - ./nginx/logs:/config/log/nginx
     restart: unless-stopped
-#
+
   coraza:
     build:
       context: ./coraza
@@ -38,10 +38,10 @@ services:
       - ./coraza/coraza.conf:/etc/coraza/coraza.conf:ro
       - ./coraza/crs-setup.conf:/etc/coraza/crs-setup.conf:ro
       - ./coraza/rules:/etc/coraza/rules:ro
-      - ./swag/config:/etc/ssl:ro
+      - ./swag/config/keys/letsencrypt:/etc/ssl:ro
     environment:
-      - CORAZA_SSL_CERT=/etc/ssl/keys/fullchain.pem
-      - CORAZA_SSL_KEY=/etc/ssl/keys/privkey.pem
+      - CORAZA_SSL_CERT=/etc/ssl/fullchain.pem
+      - CORAZA_SSL_KEY=/etc/ssl/privkey.pem
     depends_on:
       - nginx
     restart: unless-stopped
