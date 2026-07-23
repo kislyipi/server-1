@@ -26,7 +26,7 @@ services:
       - ./swag/config:/config
       - ./nginx/logs:/config/log/nginx
     restart: unless-stopped
-#
+
   coraza:
     build:
       context: ./coraza
