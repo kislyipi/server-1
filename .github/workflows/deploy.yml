@@ -39,12 +39,12 @@ jobs:
     - name: Generate test SSL certificates
       if: steps.check.outputs.need_validation == 'true'
       run: |
-        mkdir -p ./swag/config/keys
+        mkdir -p ./swag/config/etc/letsencrypt/live/localhost
         openssl req -x509 -nodes -days 1 -newkey rsa:2048 \
-          -keyout ./swag/config/keys/privkey.pem \
-          -out ./swag/config/keys/fullchain.pem \
+          -keyout ./swag/config/etc/letsencrypt/live/localhost/privkey.pem \
+          -out ./swag/config/etc/letsencrypt/live/localhost/fullchain.pem \
           -subj "/CN=localhost"
-        chmod 644 ./swag/config/keys/*.pem
+        chmod 644 ./swag/config/etc/letsencrypt/live/localhost/*.pem
 
     - name: Login to Docker Hub
       if: steps.check.outputs.need_validation == 'true'
@@ -68,7 +68,6 @@ jobs:
         for i in {1..10}; do
           curl -sfk https://localhost && break || sleep 2
         done
-        docker compose logs coraza
         docker compose exec nginx nginx -t
         status=$(curl -o /dev/null -s -w "%{http_code}" -fk https://localhost)
         if [ "$status" -eq 200 ]; then

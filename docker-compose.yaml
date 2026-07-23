@@ -2,9 +2,9 @@ services:
 
   nginx:
     image: linuxserver/swag:latest
-    expose:
-      - "80"
-      - "443"
+    ports:
+      - "80:80"
+      - "443:443"
     ulimits:
       nofile:
         soft: 65535
@@ -25,25 +25,6 @@ services:
       - ./nginx/conf.d/nginx.conf.tpl:/defaults/nginx/site-confs/default.conf:ro
       - ./swag/config:/config
       - ./nginx/logs:/config/log/nginx
-    restart: unless-stopped
-#
-  coraza:
-    build:
-      context: ./coraza
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./coraza/coraza.conf:/etc/coraza/coraza.conf:ro
-      - ./coraza/crs-setup.conf:/etc/coraza/crs-setup.conf:ro
-      - ./coraza/rules:/etc/coraza/rules:ro
-      - ./swag/config/etc/letsencrypt/live/${domain}:/etc/ssl:ro
-    environment:
-      - CORAZA_SSL_CERT=/etc/ssl/fullchain.pem
-      - CORAZA_SSL_KEY=/etc/ssl/privkey.pem
-    depends_on:
-      - nginx
     restart: unless-stopped
 
   nginx-exporter:
