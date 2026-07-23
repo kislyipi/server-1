@@ -57,6 +57,7 @@ jobs:
         echo "email=test@example.com" >> .env
         echo "login=admin" >> .env
         echo "password=admin" >> .env
+        echo "CROWDSEC_API_KEY=dummy-key-for-testing" >> .env
 
     - name: Start test environment
       if: steps.check.outputs.need_validation == 'true'
