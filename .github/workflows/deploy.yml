@@ -39,12 +39,12 @@ jobs:
     - name: Generate test SSL certificates
       if: steps.check.outputs.need_validation == 'true'
       run: |
-        mkdir -p ./swag/config/etc/letsencrypt/live/localhost
+        mkdir -p ./swag/config/keys
         openssl req -x509 -nodes -days 1 -newkey rsa:2048 \
-          -keyout ./swag/config/etc/letsencrypt/live/localhost/privkey.pem \
-          -out ./swag/config/etc/letsencrypt/live/localhost/fullchain.pem \
+          -keyout ./swag/config/keys/privkey.pem \
+          -out ./swag/config/keys/fullchain.pem \
           -subj "/CN=localhost"
-        chmod 644 ./swag/config/etc/letsencrypt/live/localhost/*.pem
+        chmod 644 ./swag/config/keys/*.pem
 
     - name: Login to Docker Hub
       if: steps.check.outputs.need_validation == 'true'
