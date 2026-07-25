@@ -1,7 +1,7 @@
 services:
-#
+
   nginx:
-    image: linuxserver/swag:latest
+    image: linuxserver/swag:5.7.0
     ports:
       - "80:80"
       - "443:443"
@@ -23,7 +23,7 @@ services:
     restart: unless-stopped
 
   crowdsec:
-    image: docker.io/crowdsecurity/crowdsec:latest
+    image: crowdsecurity/crowdsec:1.7.8
     container_name: crowdsec
     environment:
       - GID=1000
