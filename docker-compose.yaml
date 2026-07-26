@@ -26,8 +26,7 @@ services:
     image: crowdsecurity/crowdsec@sha256:2f527c9bb8b367120eb08b82890aa912ce96bfa1ada93dda0721700e4b4e0dde
     container_name: crowdsec
     environment:
-      - PUID=1000
-      - PGID=1000
+      - GID=1000
       - BOUNCER_KEY_SWAG=${CROWDSEC_API_KEY}
       - COLLECTIONS=crowdsecurity/nginx crowdsecurity/http-cve crowdsecurity/whitelist-good-actors
     volumes:
@@ -73,9 +72,8 @@ services:
     volumes:
       - ./prometheus/prometheus.yml.tpl:/etc/prometheus/prometheus.yml.tpl:ro
       - ./prometheus/data:/prometheus/data
+    user: "1000:1000"
     environment:
-      - PUID=1000
-      - PGID=1000
       - domain=${domain}
     entrypoint: /bin/sh
     command: -c "sed 's/\\$${domain}/'$$domain'/g' /etc/prometheus/prometheus.yml.tpl > /etc/prometheus/prometheus.yml && /bin/prometheus --config.file=/etc/prometheus/prometheus.yml"
@@ -85,9 +83,8 @@ services:
     image: grafana/grafana:13.1.0
     ports:
       - 3000:3000
+    user: "1000:1000"
     environment:
-      - PUID=1000
-      - PGID=1000
       - GF_SECURITY_ADMIN_USER=${login}
       - GF_SECURITY_ADMIN_PASSWORD=${password}
     volumes:
@@ -99,9 +96,7 @@ services:
     image: grafana/loki:3.7.3
     ports:
       - "3100:3100"
-    environment:
-      - PUID=1000
-      - PGID=1000
+    user: "1000:1000"
     volumes:
       - ./loki/data:/loki
       - ./loki/loki.yml:/etc/loki/loki.yml:ro
