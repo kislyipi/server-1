@@ -1,0 +1,1 @@
+no-pty,no-agent-forwarding,no-X11-forwarding,permitopen="127.0.0.1:3000" [ insert the key here and place in /home/service_username/.ssh/ ]

@@ -6,7 +6,8 @@ on:
     paths-ignore:
       - '.github/readme.md'
       - '.github/dependabot.yml'
-      - '.cd_exclude/**'
+      - '..trivyignore'
+      - '.ssh_confs/**'
   schedule:
     - cron: '0 0 * * *'
 
@@ -117,7 +118,7 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
-        source: ".,!cd_exclude/**,!certbot/**,!.github/**"
+        source: "!.trivyignore,!ssh_confs/**,!certbot/**,!.github/**,."
         target: "/home/${{ secrets.SSH_USER }}/test-site"
 
     - name: Login to Docker Hub
