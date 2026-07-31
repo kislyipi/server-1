@@ -6,7 +6,7 @@ on:
     paths-ignore:
       - '.github/readme.md'
       - '.github/dependabot.yml'
-      - '..trivyignore'
+      - '.trivyignore'
       - '.ssh_confs/**'
   schedule:
     - cron: '0 0 * * *'
@@ -89,7 +89,7 @@ jobs:
         for id in $(docker compose images -q); do
           docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
-            -v $(pwd)/cd_exclude/.trivyignore:/.trivyignore \
+            -v $(pwd)/.trivyignore:/.trivyignore \
             aquasec/trivy image \
             --ignorefile /.trivyignore \
             --quiet \
