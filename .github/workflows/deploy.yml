@@ -118,7 +118,7 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
-        source: "!.trivyignore,!ssh_confs/**,!certbot/**,!.github/**,!prometheus,."
+        source: "!.trivyignore,!ssh_confs/**,!certbot/**,!.github/**,."
         target: "/home/${{ secrets.SSH_USER }}/test-site"
 
     - name: Login to Docker Hub
