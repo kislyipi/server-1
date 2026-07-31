@@ -111,6 +111,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Grant write permissions to prometheus directory
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        port: ${{ secrets.SSH_PORT }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          if [ -d "/home/${{ secrets.SSH_USER }}/test-site/prometheus" ]; then
+            chmod -R u+w /home/${{ secrets.SSH_USER }}/test-site/prometheus
+          fi
+
     - name: Copy files to Server
       uses: appleboy/scp-action@v0.1.7
       with:
@@ -120,6 +132,16 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         source: "!.trivyignore,!ssh_confs/**,!certbot/**,!.github/**,."
         target: "/home/${{ secrets.SSH_USER }}/test-site"
+
+    - name: Restore prometheus ownership to nobody:nogroup
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        port: ${{ secrets.SSH_PORT }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          sudo chown -R nobody:nogroup /home/${{ secrets.SSH_USER }}/test-site/prometheus
 
     - name: Login to Docker Hub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
