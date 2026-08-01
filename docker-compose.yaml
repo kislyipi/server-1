@@ -76,7 +76,7 @@ services:
     environment:
       - domain=${domain}
     entrypoint: /bin/sh
-    command: -c "sed 's/\\$${domain}/'$$domain'/g' /etc/prometheus/prometheus.yml.tpl > /prometheus/prometheus.yml && /bin/prometheus --config.file=/prometheus/prometheus.yml"
+    command: -c "sed 's/\\$${domain}/'$$domain'/g' /etc/prometheus/prometheus.yml.tpl > /tmp/prometheus.yml && /bin/prometheus --config.file=/tmp/prometheus.yml"
     restart: unless-stopped
 
   grafana:
@@ -112,3 +112,26 @@ services:
     depends_on:
       - loki
     restart: unless-stopped
+
+  # postgres:
+  #   image: postgres:16-alpine
+  #   environment:
+  #     POSTGRES_USER: ${db_user}
+  #     POSTGRES_PASSWORD: ${db_pass}
+  #     POSTGRES_DB: ${db_name}
+  #   volumes:
+  #     - ./postgres/data:/var/lib/postgresql/data
+  #     - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+  #   ports:
+  #     - "5432:5432"
+  #   restart: unless-stopped
+
+  # postgres-exporter:
+  #   image: prometheuscommunity/postgres-exporter:v0.15.0
+  #   environment:
+  #     DATA_SOURCE_NAME: "postgresql://${DB_USER:-app}:${DB_PASS:-secret}@postgres:5432/${DB_NAME:-appdb}?sslmode=disable"
+  #   ports:
+  #     - "9187:9187"
+  #   depends_on:
+  #     - postgres
+  #   restart: unless-stopped
