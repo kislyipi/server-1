@@ -56,8 +56,9 @@ jobs:
       run: |
         echo "domain=localhost" > .env
         echo "email=test@example.com" >> .env
-        echo "login=admin" >> .env
-        echo "password=admin" >> .env
+        echo "grafana-login=admin" >> .env
+        echo "grafana-password=admin" >> .env
+        echo "prometheus-suffix=test" >> .env
         echo "CROWDSEC_API_KEY=dummy-key-for-testing" >> .env
 
     - name: Start test environment
@@ -118,8 +119,8 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
-        source: "!.trivyignore,!ssh_confs/**,!certbot/**,!.github/**,."
-        target: "/home/${{ secrets.SSH_USER }}/test-site"
+        source: "!.trivyignore,!conf_sample/**,!.github/**,."
+        target: "/home/${{ secrets.SSH_USER }}/server"
 
     - name: Login to Docker Hub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
@@ -132,7 +133,16 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          cd /home/${{ secrets.SSH_USER }}/test-site
-          docker compose down --remove-orphans
-          docker compose pull
-          docker compose up -d --force-recreate
+          cd /home/${{ secrets.SSH_USER }}/server
+          for env in test prod; do
+            mkdir -p "$env"
+            rsync -a --exclude='.env' ./ "$env/"
+            cp ".env.$env" "$env/.env"
+            cd "$env"
+            docker compose down --remove-orphans
+            docker compose pull
+            if [ "$env" = "prod" ]; then
+              docker compose up -d --force-recreate
+            fi
+            cd ..
+          done
