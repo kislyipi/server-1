@@ -3,8 +3,8 @@ services:
   nginx:
     image: linuxserver/swag:5.7.0
     ports:
-      - "${http-p:-80}:80"
-      - "${https-p:-443}:443"
+      - "${http_p:-80}:80"
+      - "${https_p:-443}:443"
     environment:
       - PUID=1000
       - PGID=1000
@@ -39,7 +39,7 @@ services:
   nginx-exporter:
     image: nginx/nginx-prometheus-exporter:1.5.1
     ports:
-      - "${nginx-exporter-p:-9113}:9113"
+      - "${nginx_exporter_p:-9113}:9113"
     command:
       - -nginx.scrape-uri=http://nginx:8080/metrics
     depends_on:
@@ -49,7 +49,7 @@ services:
   blackbox-exporter:
     image: prom/blackbox-exporter:v0.25.0
     ports:
-      - "${blackbox-exporter-p:-9115}:9115"
+      - "${blackbox_exporter_p:-9115}:9115"
     depends_on:
       - nginx
     restart: unless-stopped
@@ -57,7 +57,7 @@ services:
   node-exporter:
     image: prom/node-exporter:v1.8.2
     ports:
-      - "${node-exporter-p:-9100}:9100"
+      - "${node_exporter_p:-9100}:9100"
     volumes:
       - '/:/host:ro'
     command:
@@ -67,7 +67,7 @@ services:
   prometheus:
     image: prom/prometheus:v3.13.0
     ports:
-      - "${prometheus-p:-9090}:9090"
+      - "${prometheus_p:-9090}:9090"
     volumes:
       - ./prometheus/prometheus.yml.tpl:/etc/prometheus/prometheus.yml.tpl:ro
       - ./prometheus/data:/prometheus/data
@@ -75,13 +75,13 @@ services:
     environment:
       - domain=${domain}
     entrypoint: /bin/sh
-    command: -c "sed 's/\\$${domain}/'$$domain'/g' /etc/prometheus/prometheus.yml.tpl > /tmp/prometheus-$${prometheus-suffix}.yml && /bin/prometheus --config.file=/tmp/prometheus-$${prometheus-suffix}.yml"
+    command: -c "sed 's/\\$${domain}/'$$domain'/g' /etc/prometheus/prometheus.yml.tpl > /tmp/prometheus-$${prometheus_suffix}.yml && /bin/prometheus --config.file=/tmp/prometheus-$${prometheus_suffix}.yml"
     restart: unless-stopped
 
   grafana:
     image: grafana/grafana:13.1.0
     ports:
-      - "${grafana-p:-3000}:3000"
+      - "${grafana_p:-3000}:3000"
     user: "1000:1000"
     environment:
       - GF_SECURITY_ADMIN_USER=${grafana-login}
@@ -94,7 +94,7 @@ services:
   loki:
     image: grafana/loki:3.7.3
     ports:
-      - "${loki-p:-3100}:3100"
+      - "${loki_p:-3100}:3100"
     user: "1000:1000"
     volumes:
       - ./loki/data:/loki
@@ -122,7 +122,7 @@ services:
   #     - ./postgres/data:/var/lib/postgresql/data
   #     - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
   #   ports:
-  #     - "${postgres-p:-5432}:5432"
+  #     - "${postgres_p:-5432}:5432"
   #   restart: unless-stopped
 
   # postgres-exporter:
@@ -130,7 +130,7 @@ services:
   #   environment:
   #     DATA_SOURCE_NAME: "postgresql://${DB_USER:-app}:${DB_PASS:-secret}@postgres:5432/${DB_NAME:-appdb}?sslmode=disable"
   #   ports:
-  #     - "${postgres-exporter-p:-9187}:9187"
+  #     - "${postgres_exporter_p:-9187}:9187"
   #   depends_on:
   #     - postgres
   #   restart: unless-stopped

@@ -55,10 +55,9 @@ jobs:
       if: steps.check.outputs.need_validation == 'true'
       run: |
         echo "domain=localhost" > .env
-        echo "email=test@example.com" >> .env
         echo "grafana-login=admin" >> .env
         echo "grafana-password=admin" >> .env
-        echo "prometheus-suffix=test" >> .env
+        echo "prometheus_suffix=test" >> .env
         echo "CROWDSEC_API_KEY=dummy-key-for-testing" >> .env
 
     - name: Start test environment
