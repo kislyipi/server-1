@@ -135,7 +135,7 @@ jobs:
           cd /home/${{ secrets.SSH_USER }}/server
           for env in test prod; do
             mkdir -p "$env"
-            rsync -a --exclude='.env' ./ "$env/"
+            rsync -a --exclude='.env' --exclude='test' --exclude='prod' ./ "$env/"
             cd "$env"
             docker compose down --remove-orphans
             docker compose pull
