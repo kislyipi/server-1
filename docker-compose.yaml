@@ -87,7 +87,7 @@ services:
       - GF_SECURITY_ADMIN_USER=${grafana-login}
       - GF_SECURITY_ADMIN_PASSWORD=${grafana-password}
     volumes:
-      - ./grafana/prometheus.yml:/etc/grafana/provisioning/datasources/prometheus.yml:ro
+      - ./grafana/grafana.yml:/etc/grafana/provisioning/datasources/prometheus.yml:ro
       - ./grafana/data:/var/lib/grafana
     restart: unless-stopped
 
