@@ -139,7 +139,7 @@ jobs:
             cd "$env"
             docker compose down --remove-orphans
             docker compose pull
-            if [ "$env" = "prod" ]; then
+            if [ "$env" = "prod" ] && [ -f .env ]; then
               docker compose up -d --force-recreate
             fi
             cd ..
