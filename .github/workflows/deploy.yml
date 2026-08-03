@@ -136,7 +136,6 @@ jobs:
           for env in test prod; do
             mkdir -p "$env"
             rsync -a --exclude='.env' ./ "$env/"
-            cp ".env.$env" "$env/.env"
             cd "$env"
             docker compose down --remove-orphans
             docker compose pull
@@ -145,3 +144,5 @@ jobs:
             fi
             cd ..
           done
+          shopt -s extglob
+          rm -rf /home/${{ secrets.SSH_USER }}/server/!(test|prod)
