@@ -138,6 +138,8 @@ jobs:
             mkdir -p "$env"
             rsync -a --exclude='.env' --exclude='test' --exclude='prod' ./ "$env/"
             cd "$env"
+            chown -R 1000:1000 grafana loki prometheus
+            chmod -R 755 grafana loki prometheus
             docker compose down --remove-orphans
             docker compose pull
             if [ "$env" = "prod" ] && [ -f .env ]; then
