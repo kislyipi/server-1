@@ -84,8 +84,8 @@ services:
       - "${grafana_p:-3000}:3000"
     user: "1000:1000"
     environment:
-      - GF_SECURITY_ADMIN_USER=${grafana-login}
-      - GF_SECURITY_ADMIN_PASSWORD=${grafana-password}
+      - GF_SECURITY_ADMIN_USER=${grafana_login}
+      - GF_SECURITY_ADMIN_PASSWORD=${grafana_password}
     volumes:
       - ./grafana/grafana.yml:/etc/grafana/provisioning/datasources/prometheus.yml:ro
       - ./grafana/data:/var/lib/grafana
@@ -112,25 +112,25 @@ services:
       - loki
     restart: unless-stopped
 
-  # postgres:
-  #   image: postgres:16-alpine
-  #   environment:
-  #     POSTGRES_USER: ${db_user}
-  #     POSTGRES_PASSWORD: ${db_pass}
-  #     POSTGRES_DB: ${db_name}
-  #   volumes:
-  #     - ./postgres/data:/var/lib/postgresql/data
-  #     - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-  #   ports:
-  #     - "${postgres_p:-5432}:5432"
-  #   restart: unless-stopped
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${db_user}
+      POSTGRES_PASSWORD: ${db_pass}
+      POSTGRES_DB: ${db_name}
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "${postgres_p:-5432}:5432"
+    restart: unless-stopped
 
-  # postgres-exporter:
-  #   image: prometheuscommunity/postgres-exporter:v0.15.0
-  #   environment:
-  #     DATA_SOURCE_NAME: "postgresql://${DB_USER:-app}:${DB_PASS:-secret}@postgres:5432/${DB_NAME:-appdb}?sslmode=disable"
-  #   ports:
-  #     - "${postgres_exporter_p:-9187}:9187"
-  #   depends_on:
-  #     - postgres
-  #   restart: unless-stopped
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${DB_USER:-app}:${DB_PASS:-secret}@postgres:5432/${DB_NAME:-appdb}?sslmode=disable"
+    ports:
+      - "${postgres_exporter_p:-9187}:9187"
+    depends_on:
+      - postgres
+    restart: unless-stopped
