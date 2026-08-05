@@ -136,16 +136,21 @@ jobs:
           cd /home/${{ secrets.SSH_USER }}/server
           for env in test prod; do
             mkdir -p "$env"
-            rsync -a --exclude='.env' --exclude='test' --exclude='prod' ./ "$env/"
-            cd "$env"
-            chown -R 1000:1000 grafana loki prometheus
-            chmod -R 755 grafana loki prometheus
-            docker compose down --remove-orphans
-            docker compose pull
-            if [ "$env" = "prod" ] && [ -f .env ]; then
-              docker compose up -d --force-recreate
+            if [ "$env" = "test" ]; then
+              rsync -a --delete --exclude='.env' --exclude='test' --exclude='prod' ./ "$env/"
+            else
+              rsync -a --exclude='.env' --exclude='test' --exclude='prod' ./ "$env/"
             fi
-            cd ..
+            (
+              cd "$env" || exit 1
+              find . -type d -exec chmod 755 {} \;
+              find . -type f -exec chmod 644 {} \;
+              docker compose down --remove-orphans
+              docker compose pull
+              if [ "$env" = "prod" ] && [ -f .env ]; then
+                docker compose up -d --force-recreate
+              fi
+            )
           done
           shopt -s extglob
           rm -rf /home/${{ secrets.SSH_USER }}/server/!(test|prod)
