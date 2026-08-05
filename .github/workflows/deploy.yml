@@ -139,8 +139,8 @@ jobs:
             rsync -a --exclude='.env' --exclude='test' --exclude='prod' ./ "$env/"
             (
               cd "$env" || exit 1
-              find . -type d -exec chmod 755 {} \;
-              find . -type f -exec chmod 644 {} \;
+              find . -type d -exec chmod 755 {} \; 2>/dev/null
+              find . -type f -exec chmod 644 {} \; 2>/dev/null
               docker compose down --remove-orphans
               docker compose pull
               if [ "$env" = "prod" ] && [ -f .env ]; then
