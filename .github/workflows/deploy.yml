@@ -70,7 +70,7 @@ jobs:
         for i in {1..10}; do
           curl -sfk https://localhost && break || sleep 2
         done
-        docker compose exec nginx nginx -t
+        docker compose exec swag nginx -t
         status=$(curl -o /dev/null -s -w "%{http_code}" -fk https://localhost)
         if [ "$status" -eq 200 ]; then
           echo "Nginx is ready (status $status)"
