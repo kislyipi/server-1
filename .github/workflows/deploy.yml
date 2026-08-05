@@ -136,11 +136,7 @@ jobs:
           cd /home/${{ secrets.SSH_USER }}/server
           for env in test prod; do
             mkdir -p "$env"
-            if [ "$env" = "test" ]; then
-              rsync -a --delete --exclude='.env' --exclude='test' --exclude='prod' ./ "$env/"
-            else
-              rsync -a --exclude='.env' --exclude='test' --exclude='prod' ./ "$env/"
-            fi
+            rsync -a --exclude='.env' --exclude='test' --exclude='prod' ./ "$env/"
             (
               cd "$env" || exit 1
               find . -type d -exec chmod 755 {} \;
