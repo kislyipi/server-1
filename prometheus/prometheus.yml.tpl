@@ -9,6 +9,10 @@ scrape_configs:
   - job_name: 'node-exporter'
     static_configs:
       - targets: ['172.17.0.1:9100']
+
+  - job_name: 'postgres-exporter'
+    static_configs:
+      - targets: ['172.17.0.1:9187']
       
   - job_name: 'blackbox-ssl'
     metrics_path: /probe
