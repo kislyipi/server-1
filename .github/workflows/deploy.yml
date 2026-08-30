@@ -8,6 +8,7 @@ on:
       - '.github/dependabot.yml'
       - '.trivyignore'
       - '.ssh_confs/**'
+      - 'cloud.ru_deploy/**'
   schedule:
     - cron: '0 0 * * *'
 

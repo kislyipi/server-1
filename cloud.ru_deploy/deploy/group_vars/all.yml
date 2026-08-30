@@ -1,0 +1,7 @@
+username: kaloed
+
+github_repo: "https://github.com/kislyipi/server-1.git"
+github_branch: "main"
+project_dir: "prod"
+
+env_file_deploy: true

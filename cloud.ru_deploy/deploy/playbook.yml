@@ -1,0 +1,101 @@
+---
+- name: Настройка ВМ и деплой проекта
+  hosts: vm
+  become: true
+  vars_files:
+    - group_vars/all.yml
+
+  tasks:
+    - name: Проверить Python
+      ansible.builtin.command: python3 --version
+      changed_when: false
+
+    - name: Подождать пока apt освободится
+      ansible.builtin.shell: |
+        set -e
+        for i in $(seq 1 30); do
+          if fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; then
+            echo "apt is busy, waiting... (attempt $i/30)"
+            sleep 10
+          else
+            echo "apt is free"
+            exit 0
+          fi
+        done
+        echo "WARNING: apt still locked after 5 minutes, continuing anyway"
+      changed_when: false
+
+    - name: Установить зависимости для Docker
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+        update_cache: yes
+
+    - name: Добавить GPG ключ Docker
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Добавить Docker repo
+      ansible.builtin.apt_repository:
+        repo: "deb https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+
+    - name: Установить Docker
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        update_cache: yes
+
+    - name: Запустить и включить Docker
+      ansible.builtin.systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Добавить пользователя в группу docker
+      ansible.builtin.user:
+        name: "{{ username }}"
+        groups: docker
+        append: yes
+
+    - name: Склонировать GitHub репозиторий
+      ansible.builtin.git:
+        repo: "{{ github_repo }}"
+        dest: "/home/{{ username }}/{{ project_dir }}"
+        version: "{{ github_branch }}"
+        force: yes
+      when: github_repo != ""
+
+    - name: Установить права на директорию проекта
+      ansible.builtin.file:
+        path: "/home/{{ username }}/{{ project_dir }}"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        recurse: yes
+      when: github_repo != ""
+
+    - name: Скопировать .env файл на сервер
+      ansible.builtin.copy:
+        src: ../.env
+        dest: "/home/{{ username }}/{{ project_dir }}/.env"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: "0600"
+      when:
+        - github_repo != ""
+        - env_file_deploy | default(true) | bool
+
+    - name: Запустить docker compose
+      ansible.builtin.shell: |
+        docker compose up -d
+      args:
+        chdir: "/home/{{ username }}/{{ project_dir }}"
+      become_user: "{{ username }}"
+      when: github_repo != ""
