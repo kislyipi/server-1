@@ -7,10 +7,10 @@ on:
       - '.github/readme.md'
       - '.github/dependabot.yml'
       - '.trivyignore'
-      - '.ssh_confs/**'
+      - 'conf_sample/**'
       - 'cloud.ru_deploy/**'
-  schedule:
-    - cron: '0 0 * * *'
+  # schedule:
+  #   - cron: '0 0 * * *'
 
 jobs:
   validate:
@@ -120,7 +120,7 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
         target: "/home/${{ secrets.SSH_USER }}/server"
-        source: "!.trivyignore,!conf_sample/**,!.github/**,."
+        source: ",!conf_sample/**,!cloud.ru_deploy/**"
 
     - name: Login to Docker Hub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
@@ -134,9 +134,12 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         script: |
           cd /home/${{ secrets.SSH_USER }}/server
+          rm -rf /home/${{ secrets.SSH_USER }}/server/conf_sample
+          rm -rf /home/${{ secrets.SSH_USER }}/server/cloud.ru_deploy
+          
           for env in test prod; do
             mkdir -p "$env"
-            rsync -a --exclude='.env' --exclude='test' --exclude='prod' ./ "$env/"
+            rsync -a --exclude='.env' --exclude='test' --exclude='prod' --exclude='conf_sample' --exclude='cloud.ru_deploy' ./ "$env/"
             (
               cd "$env" || exit 1
               find . -type d -exec chmod 755 {} \; 2>/dev/null
@@ -148,5 +151,3 @@ jobs:
               fi
             )
           done
-          shopt -s extglob
-          rm -rf /home/${{ secrets.SSH_USER }}/server/!(test|prod)
